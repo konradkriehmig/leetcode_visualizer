@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>4. Median of Two Sorted Arrays</title>
+<script>
+  (() => {
+    const param = new URLSearchParams(window.location.search).get("scoutTheme");
+    const theme =
+      param || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    document.documentElement.setAttribute("data-theme", theme);
+  })();
+</script>
+<style>
+  :root {
+    color-scheme: dark;
+    --cp-bg: #000000;
+    --cp-bg-elevated: #000000;
+    --cp-surface: #0d0d0d;
+    --cp-surface-soft: #141414;
+    --cp-border: #252525;
+    --cp-border-strong: #3a3a3a;
+    --cp-text: #f2f2f2;
+    --cp-text-muted: #a7a7a7;
+    --cp-text-soft: #7c7c7c;
+    --cp-accent: #ffffff;
+    --cp-accent-hover: #d9d9d9;
+    --cp-accent-soft: rgba(255, 255, 255, 0.12);
+    --cp-accent-fg: #000000;
+    --cp-success: #9ae6b4;
+    --cp-danger: #ff8f8f;
+    --cp-warning: #ffe08a;
+    --cp-link: #f2f2f2;
+    --cp-shadow: none;
+    --cp-overlay: rgba(0, 0, 0, 0.8);
+    --cp-panel: transparent;
+    --cp-panel-strong: transparent;
+    --cp-sheen: rgba(255, 255, 255, 0.02);
+    --cp-highlight: rgba(255, 255, 255, 0.16);
+  }
+  html[data-theme="dark"] {
+    color-scheme: dark;
+    --cp-bg: #000000;
+    --cp-bg-elevated: #000000;
+    --cp-surface: #0d0d0d;
+    --cp-surface-soft: #141414;
+    --cp-border: #252525;
+    --cp-border-strong: #3a3a3a;
+    --cp-text: #f2f2f2;
+    --cp-text-muted: #a7a7a7;
+    --cp-text-soft: #7c7c7c;
+    --cp-accent: #ffffff;
+    --cp-accent-hover: #d9d9d9;
+    --cp-accent-soft: rgba(255, 255, 255, 0.12);
+    --cp-accent-fg: #000000;
+    --cp-success: #9ae6b4;
+    --cp-danger: #ff8f8f;
+    --cp-warning: #ffe08a;
+    --cp-link: #f2f2f2;
+    --cp-shadow: none;
+    --cp-overlay: rgba(0, 0, 0, 0.8);
+    --cp-panel: transparent;
+    --cp-panel-strong: transparent;
+    --cp-sheen: rgba(255, 255, 255, 0.02);
+    --cp-highlight: rgba(255, 255, 255, 0.16);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+
+  body {
+    background: var(--cp-bg);
+    color: var(--cp-text);
+    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 22px;
+    padding: 28px 20px 36px;
+    min-height: 100vh;
+  }
+
+  h1 {
+    margin: 0;
+    text-align: center;
+    font-size: clamp(1.6rem, 4.6vw, 2.35rem);
+    font-weight: 650;
+    letter-spacing: 0.01em;
+  }
+  h1 .num { color: inherit; }
+
+  .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    align-items: center;
+    margin-top: 2px;
+    width: 100%;
+    max-width: 780px;
+    margin-inline: auto;
+  }
+  .tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    font: 600 0.95rem inherit;
+    color: var(--cp-text-muted);
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid transparent;
+    padding: 10px 12px;
+    user-select: none;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  .tab:hover { color: var(--cp-text); }
+  .tab.active { color: var(--cp-text); border-color: var(--cp-text); }
+  .tab .x { border: none; background: none; color: inherit; cursor: pointer; font-size: 1rem; line-height: 1; padding: 0; }
+  .tab .x:hover { color: var(--cp-text); }
+
+  .tab.add-trigger {
+    justify-content: center;
+    width: 38px;
+    min-width: 38px;
+    padding: 10px 0;
+    font-size: 1.1rem;
+    border: 1px solid var(--cp-border);
+    border-bottom-color: var(--cp-border);
+  }
+  .tab.add-trigger:hover { border-color: var(--cp-text); }
+  .tab.add-trigger.active { border-color: var(--cp-text); background: var(--cp-surface-soft); }
+
+  .add-pop {
+    width: 100%;
+    max-width: 780px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding-top: 2px;
+  }
+  .add-pop[hidden] { display: none; }
+
+  .add { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .add input {
+    width: min(420px, 88vw);
+    font: 0.9rem Consolas, "Courier New", Courier, monospace;
+    color: var(--cp-text);
+    background: transparent;
+    border: 1px solid var(--cp-border);
+    padding: 9px 12px;
+  }
+  .add input:focus { outline: none; border-color: var(--cp-text); }
+  .add button {
+    font: 600 0.9rem inherit;
+    cursor: pointer;
+    color: var(--cp-text);
+    background: transparent;
+    border: 1px solid var(--cp-border);
+    padding: 9px 18px;
+    transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease;
+  }
+  .add button:hover { border-color: var(--cp-text); color: var(--cp-text); background: var(--cp-surface-soft); }
+  .hint { font-size: 0.8rem; color: var(--cp-danger); min-height: 16px; text-align: center; }
+
+  .viz-stack {
+    width: 100%;
+    max-width: 780px;
+    margin-inline: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    transform: none;
+    position: relative;
+  }
+
+  .board {
+    background: transparent;
+    border: none;
+    padding: 10px 0 0;
+    width: 100%;
+    max-width: 780px;
+    margin-inline: auto;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .array-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: flex-end;
+    justify-content: center;
+    min-height: 150px;
+    width: 100%;
+  }
+  .cell { display: flex; flex-direction: column; align-items: center; flex: 0 0 auto; position: relative; }
+  .past-marker {
+    position: absolute;
+    left: calc(100% + 10px);
+    top: 0;
+    width: 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  .end-gap { height: 60px; width: 100%; }
+  .idx-spacer { visibility: hidden; }
+  .ptr { height: 30px; display: flex; align-items: center; justify-content: center; }
+  .ptr-chip {
+    font: 700 1.35rem Consolas, "Courier New", Courier, monospace;
+    line-height: 1;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    border: none;
+    background: transparent;
+    color: var(--cp-text-soft);
+  }
+  .ptr-chip.k { color: var(--cp-text); }
+  .ptr-chip.i { color: var(--cp-text); }
+
+  .box {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--cp-border);
+    background: transparent;
+    color: var(--cp-text-muted);
+    font: 700 1.35rem Consolas, "Courier New", Courier, monospace;
+    transition: border-color 0.12s linear, color 0.12s linear, background-color 0.12s linear;
+  }
+  .box.comparing { border-color: var(--cp-text); color: var(--cp-text); }
+  .box.kept { border-color: var(--cp-text); background: var(--cp-text); color: var(--cp-bg); }
+  .box.writing { border-color: var(--cp-text); background: var(--cp-text); color: var(--cp-bg); }
+  .idx { margin-bottom: 4px; font: 700 1.35rem Consolas, "Courier New", Courier, monospace; color: var(--cp-text-soft); }
+  .cell.ghost .box { border-style: dashed; color: var(--cp-text-soft); }
+  .empty-note { color: var(--cp-text-muted); font-family: Consolas, monospace; padding: 36px 4px; }
+
+  .controls {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: nowrap;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 28px;
+    margin: 0;
+  }
+  .controls button {
+    font: 600 0.92rem inherit;
+    cursor: pointer;
+    padding: 11px 18px;
+    border: 1px solid var(--cp-border);
+    background: transparent;
+    color: var(--cp-text);
+    transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease;
+  }
+  .controls button:hover:not(:disabled) { border-color: var(--cp-text); color: var(--cp-text); background: var(--cp-surface-soft); }
+  .controls .run {
+    background: transparent;
+    border-color: var(--cp-border);
+    color: var(--cp-text);
+  }
+  .controls .run:hover:not(:disabled) { background: var(--cp-surface-soft); border-color: var(--cp-text); color: var(--cp-text); }
+  .controls button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .done-reset {
+    font: 600 0.92rem inherit;
+    cursor: pointer;
+    padding: 11px 14px;
+    min-width: 44px;
+    border: 1px solid var(--cp-border);
+    background: transparent;
+    color: var(--cp-text);
+    transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease;
+  }
+  .done-reset:hover { border-color: var(--cp-text); color: var(--cp-text); background: var(--cp-surface-soft); }
+
+  @media (max-width: 640px) {
+    body { justify-content: flex-start; padding: 24px 12px 28px; gap: 18px; }
+    .viz-stack { flex: 0 0 auto; transform: none; }
+    .board { min-height: 0; padding: 8px 0 0; }
+    .controls {
+      position: static;
+      left: auto;
+      transform: none;
+      bottom: auto;
+      margin-top: 40px;
+      width: 100%;
+      max-width: 780px;
+      flex-wrap: wrap;
+    }
+    .array-row { gap: 8px; min-height: 130px; }
+    .box { width: 50px; height: 50px; font-size: 1.1rem; }
+    .past-marker { left: calc(100% + 8px); width: 50px; }
+    .end-gap { height: 50px; width: 100%; }
+    .ptr { height: 24px; }
+    .ptr-chip { font-size: 1.1rem; }
+    .idx { font-size: 1.1rem; }
+    .controls button { padding: 10px 14px; font-size: 0.92rem; }
+    .done-reset { min-width: 40px; }
+  }
+
+  .board { padding-bottom: 96px; }
+  @media (max-width: 640px) {
+    .board { padding-bottom: 0; }
+  }
+  .viz-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    width: 100%;
+  }
+  .meta {
+    font: 700 1.05rem Consolas, "Courier New", Courier, monospace;
+    color: var(--cp-text-muted);
+    text-align: center;
+    min-height: 1.3em;
+  }
+  .meta b { color: var(--cp-text); font-weight: 700; }
+  .ptr-chip.on { color: var(--cp-text); }
+  .box.bad { border-color: var(--cp-danger); color: var(--cp-danger); }
+  .add input.small { width: 110px; }
+  @media (max-width: 640px) {
+    .viz-col { gap: 24px; }
+  }
+</style>
+<style>
+
+  .array-row { min-height: 0; }
+  .viz-col { gap: 16px; }
+  .arr-block .array-row { align-items: flex-start; }
+
+</style>
+<link rel="stylesheet" href="common.css" />
+</head>
+<body>
+  <h1><span class="num">4.</span> Median of Two Sorted Arrays</h1>
+
+  <div class="tabs" id="tabs"></div>
+
+  <div class="add-pop" id="addPop" hidden>
+    <div class="add">
+      <input type="text" placeholder="1,3" autocomplete="off" />
+      <input type="text" placeholder="2" autocomplete="off" class="small" />
+      <button id="addBtn">Add</button>
+    </div>
+    <div class="hint" id="hint"></div>
+  </div>
+
+  <div class="viz-stack">
+    <div class="board" id="board"></div>
+
+    <div class="controls">
+      <button class="run" id="runBtn">Run</button>
+      <button class="done-reset" id="doneResetBtn" aria-label="Retry" title="Retry">&#8635;</button>
+    </div>
+  </div>
+
+<script>
+(function () {
+  "use strict";
+
+  var STORAGE_KEY = "lc4_custom_v1";
+  var SPEED_MS = 650;
+
+
+  var defaultCases = [
+    { nums1: [1, 3], nums2: [2] },
+    { nums1: [1, 2], nums2: [3, 4] },
+    { nums1: [0, 0], nums2: [0, 0] },
+    { nums1: [], nums2: [1] }
+  ];
+
+  function parseSorted(raw, maxLen) {
+    if (String(raw || "").trim() === "") return { nums: [] };
+    var p = parseNums(raw, maxLen);
+    if (p.error) return p;
+    for (var i = 1; i < p.nums.length; i++) {
+      if (p.nums[i] < p.nums[i - 1]) return { error: "Arrays must be sorted ascending." };
+    }
+    return p;
+  }
+
+  function parseCase(values) {
+    var p1 = parseSorted(values[0], 30);
+    if (p1.error) return p1;
+    var p2 = parseSorted(values[1], 30);
+    if (p2.error) return p2;
+    if (p1.nums.length + p2.nums.length === 0) return { error: "At least one array must be non-empty." };
+    return { data: { nums1: p1.nums, nums2: p2.nums } };
+  }
+
+  function validStored(d) {
+    return d && isIntArray(d.nums1, 30) && isIntArray(d.nums2, 30) &&
+      d.nums1.length + d.nums2.length > 0;
+  }
+
+  function fmtVal(v) {
+    if (v === Infinity) return "\u221E";
+    if (v === -Infinity) return "-\u221E";
+    return String(v);
+  }
+
+  function buildFrames(d) {
+    var A = d.nums1.slice(), B = d.nums2.slice(), out = [];
+    var swapped = A.length > B.length;
+    var S = swapped ? B : A, L = swapped ? A : B;
+    var m = S.length, n = L.length, half = (m + n + 1) >> 1, total = m + n;
+    function fr(i, j, vals, action, done, med) {
+      return {
+        A: A, B: B, swapped: swapped, i: i, j: j, vals: vals,
+        action: action, done: !!done, med: med
+      };
+    }
+    out.push(fr(null, null, null, "start"));
+    var lo = 0, hi = m;
+    while (lo <= hi) {
+      var i = (lo + hi) >> 1, j = half - i;
+      var Sl = i > 0 ? S[i - 1] : -Infinity, Sr = i < m ? S[i] : Infinity;
+      var Ll = j > 0 ? L[j - 1] : -Infinity, Lr = j < n ? L[j] : Infinity;
+      var vals = { Sl: Sl, Sr: Sr, Ll: Ll, Lr: Lr };
+      out.push(fr(i, j, vals, "look"));
+      if (Sl > Lr) {
+        out.push(fr(i, j, vals, "moveLeft"));
+        hi = i - 1;
+      } else if (Ll > Sr) {
+        out.push(fr(i, j, vals, "moveRight"));
+        lo = i + 1;
+      } else {
+        var maxL = Math.max(Sl, Ll), minR = Math.min(Sr, Lr);
+        var med = (total % 2) ? maxL : (maxL + minR) / 2;
+        out.push(fr(i, j, vals, "found", true, med));
+        return out;
+      }
+    }
+    return out;
+  }
+
+  function renderFrame(f, board) {
+    var col = el("div", "viz-col");
+    var metaParts = [];
+    if (f.vals) {
+      metaParts.push("left max =");
+      metaParts.push({ b: fmtVal(Math.max(f.vals.Sl, f.vals.Ll)) });
+      metaParts.push("  right min =");
+      metaParts.push({ b: fmtVal(Math.min(f.vals.Sr, f.vals.Lr)) });
+      if (f.action === "moveLeft") metaParts.push("  " + fmtVal(f.vals.Sl) + " > " + fmtVal(f.vals.Lr) + " \u2192 move partition left");
+      if (f.action === "moveRight") metaParts.push("  " + fmtVal(f.vals.Ll) + " > " + fmtVal(f.vals.Sr) + " \u2192 move partition right");
+    } else {
+      metaParts.push("partition both arrays so left halves hold " + (((f.A.length + f.B.length + 1) >> 1)) + " values");
+    }
+    if (f.done) {
+      metaParts.push("  median =");
+      metaParts.push({ b: f.med });
+    }
+    col.appendChild(metaLine(metaParts));
+
+    var cut1 = f.i === null ? null : (f.swapped ? f.j : f.i);
+    var cut2 = f.i === null ? null : (f.swapped ? f.i : f.j);
+    var blocks = [
+      { label: "nums1", arr: f.A, cut: cut1 },
+      { label: "nums2", arr: f.B, cut: cut2 }
+    ];
+    blocks.forEach(function (blk) {
+      var block = el("div", "arr-block");
+      block.appendChild(el("div", "arr-label", blk.label));
+      if (blk.arr.length === 0) {
+        block.appendChild(emptyNote("(empty)"));
+      } else {
+        var row = el("div", "array-row");
+        for (var idx = 0; idx < blk.arr.length; idx++) {
+          var cls = [];
+          if (blk.cut !== null && idx < blk.cut) cls.push("kept");
+          if (blk.cut !== null && idx === blk.cut && !f.done) cls.push("comparing");
+          row.appendChild(makeCell(blk.arr[idx], idx, cls, []));
+        }
+        block.appendChild(row);
+      }
+      col.appendChild(block);
+    });
+    board.appendChild(col);
+  }
+
+  var cases = defaultCases
+    .map(function (d) { return { data: d, removable: false }; })
+    .concat(loadCustom());
+
+  var frames = [];
+  var current = 0;
+  var activeCaseIdx = 0;
+  var running = false;
+  var timer = null;
+
+  var tabs = document.getElementById("tabs");
+  var board = document.getElementById("board");
+  var runBtn = document.getElementById("runBtn");
+  var doneResetBtn = document.getElementById("doneResetBtn");
+  var addPop = document.getElementById("addPop");
+  var addBtn = document.getElementById("addBtn");
+  var hint = document.getElementById("hint");
+  var inputs = Array.prototype.slice.call(document.querySelectorAll(".add input"));
+  var addOpen = false;
+
+  function el(tag, cls, text) {
+    var d = document.createElement(tag);
+    if (cls) d.className = cls;
+    if (text !== undefined && text !== null) d.textContent = String(text);
+    return d;
+  }
+
+  function makeCell(value, idx, boxClasses, ptrRows) {
+    var cell = el("div", "cell");
+    var index = el("div", "idx", idx === null || idx === undefined ? "0" : idx);
+    if (idx === null || idx === undefined) index.classList.add("idx-spacer");
+    cell.appendChild(index);
+    var box = el("div", "box", value === null || value === undefined ? "" : value);
+    (boxClasses || []).forEach(function (c) { if (c) box.classList.add(c); });
+    cell.appendChild(box);
+    (ptrRows || []).forEach(function (p) {
+      var r = el("div", "ptr");
+      if (p) r.appendChild(el("span", "ptr-chip on", p));
+      cell.appendChild(r);
+    });
+    return cell;
+  }
+
+  function pastMarker(ptrRows) {
+    var cell = el("div", "past-marker");
+    var sp = el("div", "idx idx-spacer", "0");
+    cell.appendChild(sp);
+    cell.appendChild(el("div", "end-gap"));
+    (ptrRows || []).forEach(function (p) {
+      var r = el("div", "ptr");
+      if (p) r.appendChild(el("span", "ptr-chip on", p));
+      cell.appendChild(r);
+    });
+    return cell;
+  }
+
+  function metaLine(parts) {
+    var m = el("div", "meta");
+    parts.forEach(function (p, i) {
+      if (i > 0) m.appendChild(document.createTextNode(" "));
+      if (p && p.b !== undefined) m.appendChild(el("b", null, p.b));
+      else m.appendChild(document.createTextNode(String(p)));
+    });
+    return m;
+  }
+
+  function emptyNote(text) { return el("div", "empty-note", text); }
+
+  function parseNums(raw, maxLen) {
+    var s = String(raw || "").trim();
+    if (s === "") return { error: "Type some numbers, e.g. 1,2,3" };
+    var tokens = s.replace(/[\[\]]/g, "").split(/[,\s]+/).filter(function (t) { return t !== ""; });
+    var nums = [];
+    for (var j = 0; j < tokens.length; j++) {
+      if (!/^-?\d+$/.test(tokens[j])) return { error: '"' + tokens[j] + '" is not a whole number.' };
+      nums.push(parseInt(tokens[j], 10));
+    }
+    if (nums.length === 0) return { error: "Enter at least one number." };
+    if (nums.length > (maxLen || 60)) return { error: "Keep it to " + (maxLen || 60) + " numbers or fewer." };
+    return { nums: nums };
+  }
+
+  function parseWord(raw, maxLen, allowEmpty) {
+    var s = String(raw || "").trim().replace(/^["']|["']$/g, "");
+    if (s === "" && !allowEmpty) return { error: "Type some text." };
+    if (s.length > (maxLen || 30)) return { error: "Keep it to " + (maxLen || 30) + " characters or fewer." };
+    return { word: s };
+  }
+
+  function isIntArray(a, maxLen) {
+    return Array.isArray(a) && a.length <= (maxLen || 60) &&
+      a.every(function (x) { return typeof x === "number" && isFinite(x) && Math.floor(x) === x; });
+  }
+
+  function setDoneResetVisible(show) {
+    doneResetBtn.classList.remove("is-hidden");
+  }
+
+  function setAddOpen(open, skipRender) {
+    addOpen = !!open;
+    addPop.hidden = !addOpen;
+    if (addOpen) {
+      inputs.forEach(function (inp) { inp.value = ""; });
+      setHint("", false);
+      setTimeout(function () { if (inputs[0]) inputs[0].focus(); }, 0);
+    }
+    if (!skipRender) renderTabs();
+  }
+
+  function toggleAddOpen() {
+    setAddOpen(!addOpen);
+  }
+
+  function render() {
+    board.innerHTML = "";
+    renderFrame(frames[current], board);
+  }
+
+  function next() {
+    if (running) return;
+    if (current < frames.length - 1) {
+      current++;
+      render();
+    }
+    if (current >= frames.length - 1) setDoneResetVisible(true);
+  }
+
+  function shouldIgnoreScreenAdvanceClick(target) {
+    return !!target.closest("button, input, .tab, .tabs, .add-pop, .add, .x");
+  }
+  function reset() { stopRun(false); current = 0; render(); }
+
+  function stopRun(showDoneReset) {
+    running = false;
+    clearInterval(timer);
+    timer = null;
+    runBtn.disabled = false;
+    setDoneResetVisible(!!showDoneReset);
+  }
+  function runAlgo() {
+    if (running) return;
+    setDoneResetVisible(false);
+    if (current >= frames.length - 1) current = 0;
+    running = true;
+    runBtn.disabled = true;
+    render();
+    timer = setInterval(function () {
+      if (current >= frames.length - 1) { stopRun(true); render(); return; }
+      current++;
+      render();
+    }, SPEED_MS);
+  }
+
+  function loadCase(i) {
+    stopRun(false);
+    setAddOpen(false, true);
+    activeCaseIdx = i;
+    frames = buildFrames(cases[i].data);
+    current = 0;
+    renderTabs();
+    render();
+  }
+
+  function renderTabs() {
+    tabs.innerHTML = "";
+    cases.forEach(function (c, i) {
+      var tab = document.createElement("div");
+      tab.className = "tab" + (i === activeCaseIdx ? " active" : "");
+      tab.setAttribute("role", "button");
+      tab.tabIndex = 0;
+
+      var label = document.createElement("span");
+      label.textContent = "Test case " + (i + 1);
+      tab.appendChild(label);
+
+      if (c.removable) {
+        var x = document.createElement("button");
+        x.className = "x";
+        x.innerHTML = "&times;";
+        x.title = "Remove";
+        x.addEventListener("click", function (e) { e.stopPropagation(); removeCase(i); });
+        tab.appendChild(x);
+      }
+
+      tab.addEventListener("click", function () { loadCase(i); });
+      tab.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); loadCase(i); }
+      });
+      tabs.appendChild(tab);
+    });
+
+    var addTrigger = document.createElement("button");
+    addTrigger.type = "button";
+    addTrigger.className = "tab add-trigger" + (addOpen ? " active" : "");
+    addTrigger.setAttribute("aria-label", "Add test case");
+    addTrigger.textContent = "+";
+    addTrigger.addEventListener("click", function () { toggleAddOpen(); });
+    tabs.appendChild(addTrigger);
+  }
+
+  function addCase() {
+    var res = parseCase(inputs.map(function (inp) { return inp.value; }));
+    if (res.error) { setHint(res.error, true); return; }
+    cases.push({ data: res.data, removable: true });
+    saveCustom();
+    setAddOpen(false, true);
+    loadCase(cases.length - 1);
+    setHint(res.note || "", false);
+  }
+
+  function removeCase(i) {
+    var wasActive = i === activeCaseIdx;
+    cases.splice(i, 1);
+    saveCustom();
+    if (activeCaseIdx >= cases.length) activeCaseIdx = cases.length - 1;
+    else if (i < activeCaseIdx) activeCaseIdx--;
+    if (wasActive) loadCase(activeCaseIdx);
+    else renderTabs();
+  }
+
+  function setHint(msg, isError) {
+    hint.textContent = msg;
+    hint.style.color = isError ? "var(--cp-danger)" : "var(--cp-text-muted)";
+  }
+
+  function loadCustom() {
+    try {
+      var parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      if (!Array.isArray(parsed)) return [];
+      return parsed
+        .filter(function (d) { try { return validStored(d); } catch (e) { return false; } })
+        .map(function (d) { return { data: d, removable: true }; });
+    } catch (e) { return []; }
+  }
+  function saveCustom() {
+    try {
+      var custom = cases.filter(function (c) { return c.removable; }).map(function (c) { return c.data; });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(custom));
+    } catch (e) {}
+  }
+
+  runBtn.addEventListener("click", runAlgo);
+  doneResetBtn.addEventListener("click", reset);
+  addBtn.addEventListener("click", addCase);
+  inputs.forEach(function (inp) {
+    inp.addEventListener("keydown", function (e) { if (e.key === "Enter") addCase(); });
+  });
+  document.addEventListener("click", function (e) {
+    if (shouldIgnoreScreenAdvanceClick(e.target)) return;
+    next();
+  });
+
+  loadCase(0);
+})();
+</script>
+</body>
+</html>
