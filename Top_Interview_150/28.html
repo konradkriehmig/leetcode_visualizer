@@ -351,12 +351,21 @@ cursor: pointer;
     min-height: 1.3em;
   }
   .meta b { color: var(--cp-text); font-weight: 400; }
+  .meta b.step-slot {
+    display: inline-block;
+    width: 16ch;
+    text-align: left;
+  }
+  .meta b.lps-inline {
+    display: inline-block;
+    padding: 0 2px;
+    border: 1px solid transparent;
+    line-height: 1.1;
+  }
   .meta b.ready-inline {
     background: var(--cp-text);
     color: var(--cp-bg);
-    padding: 0;
-    outline: 1px solid var(--cp-text);
-    outline-offset: 0;
+    border-color: var(--cp-text);
   }
   .ptr-chip.on { color: var(--cp-text); }
   .box.bad { border-color: var(--cp-danger); color: var(--cp-danger); }
@@ -595,11 +604,12 @@ cursor: pointer;
   function renderFrameKmp(f, board) {
     var col = el("div", "viz-col");
     col.appendChild(metaLine(["first occurrence =", { b: f.result === null ? "?" : f.result }]));
-    col.appendChild(metaLine([
-      f.phase === "lps" ? "Step 1: build lps" : "Step 2: search",
+    var stepMeta = metaLine([
+      { b: f.phase === "lps" ? "Step 1: build lps" : "Step 2: search", cls: "step-slot" },
       "lps =",
-      { b: f.lps.join(" "), cls: f.phase === "lps" && f.action === "ready" ? "ready-inline" : null }
-    ]));
+      { b: f.lps.join(" "), cls: f.phase === "lps" && f.action === "ready" ? "lps-inline ready-inline" : "lps-inline" }
+    ]);
+    col.appendChild(stepMeta);
 
     var stack = el("div");
     stack.style.display = "flex";
