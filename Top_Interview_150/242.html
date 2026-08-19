@@ -80,7 +80,7 @@
     align-items: center;
     justify-content: flex-start;
     gap: 22px;
-    padding: 28px 20px 0;
+    padding: 28px 20px 36px;
     min-height: 100vh;
   }
   h1 {
@@ -198,44 +198,15 @@ color: var(--cp-text-muted);
     display: flex;
     align-items: center;
     justify-content: center;
-  }
+  }
   .array-row {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-    align-items: flex-end;
-    justify-content: center;
-    min-height: 150px;
-    width: 100%;
-  }
-  .array-row.separated {
-    gap: 0;
     align-items: flex-start;
+    justify-content: center;
     min-height: 0;
-    border: 2px solid var(--cp-border);
-    overflow: visible;
-    margin-top: 22px;
-  }
-  .array-row.separated .cell + .cell::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 2px;
-    background: var(--cp-border);
-    z-index: 2;
-    pointer-events: none;
-  }
-  .array-row.separated .box {
-    border: none;
-  }
-  .array-row.separated .idx {
-    position: absolute;
-    top: -22px;
-    left: 50%;
-    transform: translateX(-50%);
-    margin-bottom: 0;
+    width: 100%;
   }
   .cell { display: flex; flex-direction: column; align-items: center; flex: 0 0 auto; position: relative; }
   .past-marker {
@@ -251,9 +222,9 @@ color: var(--cp-text-muted);
   }
   .end-gap { height: 60px; width: 100%; }
   .idx-spacer { visibility: hidden; }
-  .ptr { height: 30px; display: flex; align-items: center; justify-content: center; }
+  .ptr { height: 30px; display: flex; align-items: center; justify-content: center; }
   .ptr-chip {
-    font: 400 1.35rem Consolas, "Courier New", Courier, monospace;
+    font: 400 1.05rem "Titillium Web", Arial, "Helvetica Neue", Helvetica, sans-serif;
     line-height: 1;
     padding: 0;
     display: inline-flex;
@@ -264,8 +235,7 @@ color: var(--cp-text-muted);
     color: var(--cp-text-soft);
   }
   .ptr-chip.k { color: var(--cp-text); }
-  .ptr-chip.i { color: var(--cp-text); }
-
+  .ptr-chip.i { color: var(--cp-text); }
   .box {
     width: 60px;
     height: 60px;
@@ -283,18 +253,19 @@ color: var(--cp-text-muted);
   .box.writing { border-color: var(--cp-text); background: var(--cp-text); color: var(--cp-bg); }
   .idx { margin-bottom: 4px; font: 400 1.35rem Consolas, "Courier New", Courier, monospace; color: var(--cp-text-soft); }
   .cell.ghost .box { border-style: dashed; color: var(--cp-text-soft); }
-  .empty-note { color: var(--cp-text-muted); font-family: Consolas, monospace; padding: 36px 4px; }
+  .empty-note { color: var(--cp-text-muted); font-family: Consolas, monospace; padding: 36px 4px; }
+
   .controls {
     display: flex;
     gap: 10px;
     justify-content: center;
     align-items: center;
     flex-wrap: nowrap;
-    position: static;
-    left: auto;
-    transform: none;
-    bottom: auto;
-    margin-top: 24px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 28px;
+    margin: 0;
   }
   .controls button {
     font-size: 0.95rem;
@@ -341,54 +312,18 @@ color: var(--cp-text-muted);
       width: 100%;
       max-width: 780px;
       flex-wrap: wrap;
-    }
-    .array-row { gap: 8px; min-height: 130px; }
-    .box { width: 50px; height: 50px; font-size: 1.1rem; }
-    .past-marker { left: calc(100% + 8px); width: 50px; }
-    .end-gap { height: 50px; width: 100%; }
-    .ptr { height: 24px; }
-    .ptr-chip { font-size: 1.1rem; }
-    .idx { font-size: 1.1rem; }
-    .controls button {
-    font-size: 0.95rem;
-    font-weight: 400;
-    font-family: "Titillium Web", Arial, "Helvetica Neue", Helvetica, sans-serif; padding: 10px 14px; font-size: 0.92rem; }
-    .done-reset {
-    font-size: 0.95rem;
-    font-weight: 400;
-    font-family: "Titillium Web", Arial, "Helvetica Neue", Helvetica, sans-serif; min-width: 40px; }
-  }
-  .array-row.separated {
-    gap: 0;
+    }
+  .array-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
     align-items: flex-start;
+    justify-content: center;
     min-height: 0;
-    border: 2px solid var(--cp-border);
-    overflow: visible;
-    margin-top: 22px;
-  }
-  .array-row.separated .cell + .cell::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 2px;
-    background: var(--cp-border);
-    z-index: 2;
-    pointer-events: none;
-  }
-  .array-row.separated .box {
-    border: none;
-  }
-  .array-row.separated .idx {
-    position: absolute;
-    top: -22px;
-    left: 50%;
-    transform: translateX(-50%);
-    margin-bottom: 0;
+    width: 100%;
   }
 
-  .board { padding-bottom: 0; }
+  .board { padding-bottom: 96px; }
   @media (max-width: 640px) {
     .board { padding-bottom: 0; }
   }
@@ -429,6 +364,7 @@ color: var(--cp-text-muted);
     font-size: 1rem;
   }
 </style>
+<link rel="stylesheet" href="visualizer-shared.css" />
 </head>
 <body>
   <h1><span class="num">242.</span> Valid Anagram</h1>
@@ -522,12 +458,10 @@ color: var(--cp-text-muted);
 
   function renderFrame(f, board) {
     var col = el("div", "viz-col");
-    var metaParts = ["anagram =", { b: f.result === null ? "?" : f.result }];
-    if (f.action === "lengths") metaParts.push("(lengths differ)");
-    col.appendChild(metaLine(metaParts));
+    col.appendChild(metaLine(["anagram =", { b: f.result === null ? "?" : f.result }]));
 
-    col.appendChild(metaLine(["s  (count up)"]));
-    var rowS = el("div", "array-row separated");
+    col.appendChild(metaLine(["s"]));
+    var rowS = el("div", "array-row");
     for (var idx = 0; idx < f.s.length; idx++) {
       var cls = [];
       if (f.phase === 1 && f.i === idx) cls.push(f.action === "look" ? "comparing" : "writing");
@@ -537,8 +471,8 @@ color: var(--cp-text-muted);
     }
     col.appendChild(rowS);
 
-    col.appendChild(metaLine(["t  (count down)"]));
-    var rowT = el("div", "array-row separated");
+    col.appendChild(metaLine(["t"]));
+    var rowT = el("div", "array-row");
     for (var jdx = 0; jdx < f.t.length; jdx++) {
       var clsT = [];
       if (f.phase === 2 && f.i === jdx) {
@@ -553,7 +487,7 @@ color: var(--cp-text-muted);
     col.appendChild(rowT);
 
     col.appendChild(metaLine(["counts"]));
-    var rowC = el("div", "array-row separated");
+    var rowC = el("div", "array-row");
     if (f.counts.length === 0) rowC.appendChild(emptyNote("{ }  empty"));
     for (var e = 0; e < f.counts.length; e++) {
       var clsC = [];

@@ -1,0 +1,153 @@
+:root {
+  --cell-size: 60px;
+}
+
+body {
+  padding: 28px 20px 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Space Grotesk", "Titillium Web", Arial, "Helvetica Neue", Helvetica, sans-serif;
+  font-weight: 400;
+}
+
+.board {
+  padding-bottom: 0;
+}
+
+.array-row {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 0;
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: auto;
+  min-height: 0;
+  margin-top: 22px;
+  border: 2px solid var(--cp-border);
+  overflow: visible;
+}
+
+.array-row .cell + .cell::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 2;
+  width: 2px;
+  background: var(--cp-border);
+  pointer-events: none;
+}
+
+.array-row .box {
+  width: var(--cell-size);
+  height: var(--cell-size);
+  border: 0;
+}
+
+.array-row .idx {
+  position: absolute;
+  top: -22px;
+  left: 50%;
+  margin-bottom: 0;
+  transform: translateX(-50%);
+}
+
+.array-row .ptr {
+  position: absolute;
+  top: calc(var(--cell-size) + 6px);
+  left: 0;
+  width: 100%;
+}
+
+.array-row .ptr + .ptr {
+  top: calc(var(--cell-size) + 34px);
+}
+
+.array-row .ptr + .ptr + .ptr {
+  top: calc(var(--cell-size) + 62px);
+}
+
+.array-row:has(.ptr) {
+  margin-bottom: 32px;
+}
+
+.array-row:has(.ptr + .ptr) {
+  margin-bottom: 60px;
+}
+
+.array-row:has(.ptr + .ptr + .ptr) {
+  margin-bottom: 88px;
+}
+
+.array-row:has(> .empty-note) {
+  width: var(--cell-size);
+  height: var(--cell-size);
+  min-width: var(--cell-size);
+  margin-top: 0;
+  border: 0;
+}
+
+.controls {
+  position: static;
+  bottom: auto;
+  left: auto;
+  margin: 24px 0 0;
+  transform: none;
+}
+
+.viz-col {
+  gap: 14px;
+}
+
+.meta,
+.arr-label {
+  font-family: "Titillium Web", Arial, "Helvetica Neue", Helvetica, sans-serif;
+  font-weight: 400;
+}
+
+.empty-note {
+  width: var(--cell-size);
+  height: var(--cell-size);
+  padding: 0;
+  visibility: hidden;
+}
+
+body .target,
+body .target .target-key,
+body .target .target-val,
+body .meta,
+body .meta b,
+body .arr-label,
+body .box,
+body .idx,
+body .ptr-chip,
+body .empty-note {
+  font-family: "Titillium Web", Arial, "Helvetica Neue", Helvetica, sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+@media (max-width: 640px) {
+  :root {
+    --cell-size: 50px;
+  }
+
+  body {
+    padding: 24px 12px 28px;
+  }
+
+  .controls {
+    margin-top: 40px;
+  }
+
+  .viz-col {
+    gap: 12px;
+  }
+}

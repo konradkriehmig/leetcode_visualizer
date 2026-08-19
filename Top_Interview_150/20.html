@@ -16,6 +16,7 @@
   @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500&family=Titillium+Web:wght@400;600;700&display=swap");
   :root {
     color-scheme: dark;
+    --cell-size: 60px;
     --cp-bg: #000000;
     --cp-bg-elevated: #000000;
     --cp-surface: #0d0d0d;
@@ -198,14 +199,14 @@ color: var(--cp-text-muted);
     display: flex;
     align-items: center;
     justify-content: center;
-  }
+  }
   .array-row {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-    align-items: flex-end;
+    align-items: flex-start;
     justify-content: center;
-    min-height: 150px;
+    min-height: 0;
     width: 100%;
   }
   .array-row.separated {
@@ -237,6 +238,12 @@ color: var(--cp-text-muted);
     transform: translateX(-50%);
     margin-bottom: 0;
   }
+  .array-row.separated .ptr {
+    position: absolute;
+    top: calc(var(--cell-size) + 6px);
+    left: 0;
+    width: 100%;
+  }
   .cell { display: flex; flex-direction: column; align-items: center; flex: 0 0 auto; position: relative; }
   .past-marker {
     position: absolute;
@@ -251,9 +258,9 @@ color: var(--cp-text-muted);
   }
   .end-gap { height: 60px; width: 100%; }
   .idx-spacer { visibility: hidden; }
-  .ptr { height: 30px; display: flex; align-items: center; justify-content: center; }
+  .ptr { height: 30px; display: flex; align-items: center; justify-content: center; }
   .ptr-chip {
-    font: 400 1.35rem Consolas, "Courier New", Courier, monospace;
+    font: 400 1.05rem "Titillium Web", Arial, "Helvetica Neue", Helvetica, sans-serif;
     line-height: 1;
     padding: 0;
     display: inline-flex;
@@ -264,11 +271,10 @@ color: var(--cp-text-muted);
     color: var(--cp-text-soft);
   }
   .ptr-chip.k { color: var(--cp-text); }
-  .ptr-chip.i { color: var(--cp-text); }
-
+  .ptr-chip.i { color: var(--cp-text); }
   .box {
-    width: 60px;
-    height: 60px;
+    width: var(--cell-size);
+    height: var(--cell-size);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -283,7 +289,8 @@ color: var(--cp-text-muted);
   .box.writing { border-color: var(--cp-text); background: var(--cp-text); color: var(--cp-bg); }
   .idx { margin-bottom: 4px; font: 400 1.35rem Consolas, "Courier New", Courier, monospace; color: var(--cp-text-soft); }
   .cell.ghost .box { border-style: dashed; color: var(--cp-text-soft); }
-  .empty-note { color: var(--cp-text-muted); font-family: Consolas, monospace; padding: 36px 4px; }
+  .empty-note { color: var(--cp-text-muted); font-family: Consolas, monospace; padding: 36px 4px; }
+
   .controls {
     display: flex;
     gap: 10px;
@@ -341,51 +348,28 @@ color: var(--cp-text-muted);
       width: 100%;
       max-width: 780px;
       flex-wrap: wrap;
-    }
-    .array-row { gap: 8px; min-height: 130px; }
-    .box { width: 50px; height: 50px; font-size: 1.1rem; }
+    }
+    .array-row { gap: 8px; min-height: 0; }
+    :root { --cell-size: 50px; }
+    .box { font-size: 1.1rem; }
     .past-marker { left: calc(100% + 8px); width: 50px; }
     .end-gap { height: 50px; width: 100%; }
     .ptr { height: 24px; }
     .ptr-chip { font-size: 1.1rem; }
     .idx { font-size: 1.1rem; }
     .controls button {
-    font-size: 0.95rem;
-    font-weight: 400;
-    font-family: "Titillium Web", Arial, "Helvetica Neue", Helvetica, sans-serif; padding: 10px 14px; font-size: 0.92rem; }
+      font-size: 0.95rem;
+      font-weight: 400;
+      font-family: "Titillium Web", Arial, "Helvetica Neue", Helvetica, sans-serif;
+      padding: 10px 14px;
+      font-size: 0.92rem;
+    }
     .done-reset {
-    font-size: 0.95rem;
-    font-weight: 400;
-    font-family: "Titillium Web", Arial, "Helvetica Neue", Helvetica, sans-serif; min-width: 40px; }
-  }
-  .array-row.separated {
-    gap: 0;
-    align-items: flex-start;
-    min-height: 0;
-    border: 2px solid var(--cp-border);
-    overflow: visible;
-    margin-top: 22px;
-  }
-  .array-row.separated .cell + .cell::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 2px;
-    background: var(--cp-border);
-    z-index: 2;
-    pointer-events: none;
-  }
-  .array-row.separated .box {
-    border: none;
-  }
-  .array-row.separated .idx {
-    position: absolute;
-    top: -22px;
-    left: 50%;
-    transform: translateX(-50%);
-    margin-bottom: 0;
+      font-size: 0.95rem;
+      font-weight: 400;
+      font-family: "Titillium Web", Arial, "Helvetica Neue", Helvetica, sans-serif;
+      min-width: 40px;
+    }
   }
 
   .board { padding-bottom: 0; }
@@ -396,11 +380,11 @@ color: var(--cp-text-muted);
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 30px;
+    gap: 14px;
     width: 100%;
   }
   .meta {
-    font: 400 1.05rem Consolas, "Courier New", Courier, monospace;
+    font: 400 1.05rem "Titillium Web", Arial, "Helvetica Neue", Helvetica, sans-serif;
     color: var(--cp-text-muted);
     text-align: center;
     min-height: 1.3em;
@@ -410,7 +394,7 @@ color: var(--cp-text-muted);
   .box.bad { border-color: var(--cp-danger); color: var(--cp-danger); }
   .add input.small { width: 110px; }
   @media (max-width: 640px) {
-    .viz-col { gap: 24px; }
+    .viz-col { gap: 12px; }
   }
 
   body,
@@ -511,11 +495,21 @@ color: var(--cp-text-muted);
 
   function renderFrame(f, board) {
     var col = el("div", "viz-col");
-    var metaParts = ["valid =", { b: f.result === null ? "?" : f.result }];
-    if (f.action === "done" && f.result === false) metaParts.push("(stack not empty)");
-    col.appendChild(metaLine(metaParts));
+    col.appendChild(metaLine(["valid =", { b: f.result === null ? "?" : f.result }]));
 
+    var stack = el("div");
+    stack.style.display = "flex";
+    stack.style.flexDirection = "column";
+    stack.style.alignItems = "flex-start";
+    stack.style.gap = "12px";
+    stack.style.maxWidth = "100%";
+    stack.style.overflowX = "visible";
+
+    stack.appendChild(metaLine(["stack 1"]));
     var row = el("div", "array-row separated");
+    row.style.width = "auto";
+    row.style.justifyContent = "flex-start";
+    row.style.flexWrap = "nowrap";
     for (var idx = 0; idx < f.s.length; idx++) {
       var cls = [];
       if (f.i === idx) {
@@ -526,23 +520,34 @@ color: var(--cp-text-muted);
       if (f.result === true) cls.push("kept");
       row.appendChild(makeCell(f.s[idx], idx, cls, [f.i === idx ? "i" : null]));
     }
-    col.appendChild(row);
+    stack.appendChild(row);
 
-    col.appendChild(metaLine(["stack  (top on the right)"]));
+    var stack2Label = metaLine(["stack 2"]);
+    stack2Label.style.marginTop = "32px";
+    stack.appendChild(stack2Label);
     var rowS = el("div", "array-row separated");
-    if (f.stack.length === 0) rowS.appendChild(emptyNote("[ ]  empty stack"));
-    for (var t = 0; t < f.stack.length; t++) {
-      var clsS = [];
-      var isTop = t === f.stack.length - 1;
-      if (isTop) {
-        if (f.action === "push") clsS.push("writing");
-        else if (f.action === "matchTop") clsS.push("comparing");
-        else if (f.action === "mismatch") clsS.push("bad");
-        else if (f.action === "done" && f.result === false) clsS.push("bad");
+    rowS.style.width = "auto";
+    rowS.style.justifyContent = "flex-start";
+    rowS.style.flexWrap = "nowrap";
+    if (f.stack.length === 0) {
+      rowS.style.visibility = "hidden";
+      rowS.appendChild(makeCell("", 0, [], []));
+    } else {
+      for (var t = 0; t < f.stack.length; t++) {
+        var clsS = [];
+        var isTop = t === f.stack.length - 1;
+        if (isTop) {
+          if (f.action === "push") clsS.push("writing");
+          else if (f.action === "matchTop") clsS.push("comparing");
+          else if (f.action === "mismatch") clsS.push("bad");
+          else if (f.action === "done" && f.result === false) clsS.push("bad");
+        }
+        rowS.appendChild(makeCell(f.stack[t], t, clsS, []));
       }
-      rowS.appendChild(makeCell(f.stack[t], null, clsS, []));
     }
-    col.appendChild(rowS);
+    stack.appendChild(rowS);
+
+    col.appendChild(stack);
 
     board.appendChild(col);
   }
@@ -812,17 +817,3 @@ color: var(--cp-text-muted);
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
