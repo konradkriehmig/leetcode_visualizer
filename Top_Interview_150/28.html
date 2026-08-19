@@ -16,6 +16,7 @@
   @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500&family=Titillium+Web:wght@400;600;700&display=swap");
   :root {
     color-scheme: dark;
+    --cell-size: 60px;
     --cp-bg: #000000;
     --cp-bg-elevated: #000000;
     --cp-surface: #0d0d0d;
@@ -80,7 +81,7 @@
     align-items: center;
     justify-content: flex-start;
     gap: 22px;
-    padding: 28px 20px 36px;
+    padding: 28px 20px 0;
     min-height: 100vh;
   }
   h1 {
@@ -208,6 +209,35 @@ color: var(--cp-text-muted);
     min-height: 0;
     width: 100%;
   }
+  .array-row.separated {
+    gap: 0;
+    align-items: flex-start;
+    min-height: 0;
+    border: 2px solid var(--cp-border);
+    overflow: visible;
+    margin-top: 22px;
+  }
+  .array-row.separated .cell + .cell::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--cp-border);
+    z-index: 2;
+    pointer-events: none;
+  }
+  .array-row.separated .box {
+    border: none;
+  }
+  .array-row.separated .idx {
+    position: absolute;
+    top: -22px;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-bottom: 0;
+  }
   .cell { display: flex; flex-direction: column; align-items: center; flex: 0 0 auto; position: relative; }
   .past-marker {
     position: absolute;
@@ -238,8 +268,8 @@ color: var(--cp-text-muted);
   .ptr-chip.i { color: var(--cp-text); }
 
   .box {
-    width: 60px;
-    height: 60px;
+    width: var(--cell-size);
+    height: var(--cell-size);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -262,11 +292,11 @@ color: var(--cp-text-muted);
     justify-content: center;
     align-items: center;
     flex-wrap: nowrap;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    bottom: 28px;
-    margin: 0;
+    position: static;
+    left: auto;
+    transform: none;
+    bottom: auto;
+    margin-top: 24px;
   }
   .controls button {
     font-weight: 400;
@@ -317,7 +347,8 @@ cursor: pointer;
       flex-wrap: wrap;
     }
     .array-row { gap: 8px; min-height: 0; }
-    .box { width: 50px; height: 50px; font-size: 1.1rem; }
+    :root { --cell-size: 50px; }
+    .box { font-size: 1.1rem; }
     .past-marker { left: calc(100% + 8px); width: 50px; }
     .end-gap { height: 50px; width: 100%; }
     .ptr { height: 24px; }
@@ -333,7 +364,7 @@ cursor: pointer;
     font-family: "Titillium Web", Arial, "Helvetica Neue", Helvetica, sans-serif; min-width: 40px; }
   }
 
-  .board { padding-bottom: 96px; }
+  .board { padding-bottom: 0; }
   @media (max-width: 640px) {
     .board { padding-bottom: 0; }
   }
@@ -476,7 +507,6 @@ cursor: pointer;
   function renderFrameBrute(f, board) {
     var col = el("div", "viz-col");
     col.appendChild(metaLine(["first occurrence =", { b: f.result === null ? "?" : f.result }]));
-    col.appendChild(metaLine(["Brute force"]));
 
     var stack = el("div");
     stack.style.display = "flex";
@@ -484,10 +514,10 @@ cursor: pointer;
     stack.style.alignItems = "flex-start";
     stack.style.gap = "26px";
     stack.style.maxWidth = "100%";
-    stack.style.overflowX = "auto";
+    stack.style.overflowX = "visible";
 
     stack.appendChild(metaLine(["haystack"]));
-    var rowH = el("div", "array-row");
+    var rowH = el("div", "array-row separated");
     rowH.style.width = "auto";
     rowH.style.justifyContent = "flex-start";
     rowH.style.flexWrap = "nowrap";
@@ -506,16 +536,12 @@ cursor: pointer;
     stack.appendChild(rowH);
 
     stack.appendChild(metaLine(["needle"]));
-    var rowN = el("div", "array-row");
+    var rowN = el("div", "array-row separated");
     rowN.style.width = "auto";
     rowN.style.justifyContent = "flex-start";
     rowN.style.flexWrap = "nowrap";
     var offset = f.start === null ? 0 : f.start;
-    for (var sp = 0; sp < offset; sp++) {
-      var spacer = makeCell("", null, [], []);
-      spacer.style.visibility = "hidden";
-      rowN.appendChild(spacer);
-    }
+    rowN.style.marginLeft = "calc(" + offset + " * var(--cell-size))";
     for (var jdx = 0; jdx < f.nd.length; jdx++) {
       var clsN = [];
       if (f.action === "found") clsN.push("kept");
@@ -617,10 +643,10 @@ cursor: pointer;
     stack.style.alignItems = "flex-start";
     stack.style.gap = "26px";
     stack.style.maxWidth = "100%";
-    stack.style.overflowX = "auto";
+    stack.style.overflowX = "visible";
 
     stack.appendChild(metaLine(["haystack"]));
-    var rowH = el("div", "array-row");
+    var rowH = el("div", "array-row separated");
     rowH.style.width = "auto";
     rowH.style.justifyContent = "flex-start";
     rowH.style.flexWrap = "nowrap";
@@ -641,16 +667,12 @@ cursor: pointer;
     stack.appendChild(rowH);
 
     stack.appendChild(metaLine(["needle"]));
-    var rowN = el("div", "array-row");
+    var rowN = el("div", "array-row separated");
     rowN.style.width = "auto";
     rowN.style.justifyContent = "flex-start";
     rowN.style.flexWrap = "nowrap";
     var offset = (f.phase === "search" && f.start !== null) ? f.start : 0;
-    for (var sp = 0; sp < offset; sp++) {
-      var spacer = makeCell("", null, [], []);
-      spacer.style.visibility = "hidden";
-      rowN.appendChild(spacer);
-    }
+    rowN.style.marginLeft = "calc(" + offset + " * var(--cell-size))";
     for (var jdx = 0; jdx < f.nd.length; jdx++) {
       var clsN = [];
       if (f.phase === "search") {
@@ -675,7 +697,7 @@ cursor: pointer;
     stack.appendChild(rowN);
 
     stack.appendChild(metaLine(["lps"]));
-    var rowLps = el("div", "array-row");
+    var rowLps = el("div", "array-row separated");
     rowLps.style.width = "auto";
     rowLps.style.justifyContent = "flex-start";
     rowLps.style.flexWrap = "nowrap";

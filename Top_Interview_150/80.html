@@ -80,7 +80,7 @@
     align-items: center;
     justify-content: flex-start;
     gap: 22px;
-    padding: 28px 20px 36px;
+    padding: 28px 20px 0;
     min-height: 100vh;
   }
   h1 {
@@ -208,6 +208,35 @@ color: var(--cp-text-muted);
     min-height: 150px;
     width: 100%;
   }
+  .array-row.separated {
+    gap: 0;
+    align-items: flex-start;
+    min-height: 0;
+    border: 2px solid var(--cp-border);
+    overflow: visible;
+    margin-top: 22px;
+  }
+  .array-row.separated .cell + .cell::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--cp-border);
+    z-index: 2;
+    pointer-events: none;
+  }
+  .array-row.separated .box {
+    border: none;
+  }
+  .array-row.separated .idx {
+    position: absolute;
+    top: -22px;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-bottom: 0;
+  }
   .cell { display: flex; flex-direction: column; align-items: center; flex: 0 0 auto; position: relative; }
   .past-marker {
     position: absolute;
@@ -254,19 +283,18 @@ color: var(--cp-text-muted);
   .box.writing { border-color: var(--cp-text); background: var(--cp-text); color: var(--cp-bg); }
   .idx { margin-bottom: 4px; font: 400 1.35rem Consolas, "Courier New", Courier, monospace; color: var(--cp-text-soft); }
   .cell.ghost .box { border-style: dashed; color: var(--cp-text-soft); }
-  .empty-note { color: var(--cp-text-muted); font-family: Consolas, monospace; padding: 36px 4px; }
-
+  .empty-note { color: var(--cp-text-muted); font-family: Consolas, monospace; padding: 36px 4px; }
   .controls {
     display: flex;
     gap: 10px;
     justify-content: center;
     align-items: center;
     flex-wrap: nowrap;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    bottom: 28px;
-    margin: 0;
+    position: static;
+    left: auto;
+    transform: none;
+    bottom: auto;
+    margin-top: 24px;
   }
   .controls button {
     font-size: 0.95rem;
@@ -330,8 +358,37 @@ color: var(--cp-text-muted);
     font-weight: 400;
     font-family: "Titillium Web", Arial, "Helvetica Neue", Helvetica, sans-serif; min-width: 40px; }
   }
+  .array-row.separated {
+    gap: 0;
+    align-items: flex-start;
+    min-height: 0;
+    border: 2px solid var(--cp-border);
+    overflow: visible;
+    margin-top: 22px;
+  }
+  .array-row.separated .cell + .cell::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--cp-border);
+    z-index: 2;
+    pointer-events: none;
+  }
+  .array-row.separated .box {
+    border: none;
+  }
+  .array-row.separated .idx {
+    position: absolute;
+    top: -22px;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-bottom: 0;
+  }
 
-  .board { padding-bottom: 96px; }
+  .board { padding-bottom: 0; }
   @media (max-width: 640px) {
     .board { padding-bottom: 0; }
   }
@@ -447,7 +504,7 @@ color: var(--cp-text-muted);
   }
 
   function renderFrame(f, board) {
-    var row = el("div", "array-row");
+    var row = el("div", "array-row separated");
     var n = f.arr.length;
     if (n === 0) row.appendChild(emptyNote("[ ]  empty array"));
     var lastCell = null;
@@ -731,6 +788,7 @@ color: var(--cp-text-muted);
 </script>
 </body>
 </html>
+
 
 
 
